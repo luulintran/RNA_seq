@@ -1,0 +1,10 @@
+{
+    "input": "SampleSheet.csv",
+    "outdir": "results",
+    "email": "luuli.tran@cuanschutz.edu",
+    "multiqc_title": "rnaseq_2024_07_24",
+    "genome": "GRCm38",
+    "remove_ribo_rna": true,
+    "aligner": "star_salmon",
+    "pseudo_aligner": "salmon"
+}
