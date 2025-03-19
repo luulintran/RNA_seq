@@ -39,7 +39,7 @@ required_directories <- c(
   "data",
   "data/meta_data",
   "data/processed_data",
-  "data/processed_data/normalized_counts",
+  "data/processed_data/raw_counts",
   "notebooks",
   "notebooks/exploratory_analysis",
   "notebooks/final_reports",

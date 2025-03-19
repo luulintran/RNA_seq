@@ -20,7 +20,8 @@
 project <- "rnaseq_e16"
 analysis <- "deseq"
 
-input_file <- "data/meta_data/SampleSheet.csv"
+input_cts <- "data/processed_data/raw_counts/rnaseq_e16_raw_counts.tsv"
+input_coldata <- "data/meta_data/SampleSheet.csv"
 
 output_dir_robj <- file.path("results", "r_objects", analysis)
 output_dir_tables <- file.path("results", "tables", analysis)
