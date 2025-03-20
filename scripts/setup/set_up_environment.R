@@ -34,6 +34,21 @@ if (file.exists("renv.lock")) {
   stop("renv.lock file not found. Check that it is in the project directory.")
 }
 
+# Load libraries
+library(clusterProfiler)
+library(DESeq2)
+library(pheatmap)
+library(tidyverse)
+library(dplyr)
+library(readr)
+library(org.Mm.eg.db)
+library(ggplot2)
+library(extrafont)
+library(EnhancedVolcano)
+
+# import Arial font
+font_import(pattern = "Arial", prompt = FALSE)
+
 # Set up directory structure
 required_directories <- c(
   "data",
