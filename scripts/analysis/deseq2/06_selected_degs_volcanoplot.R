@@ -1,15 +1,29 @@
-
-# SET UP
-library(ggplot2)
-library(DESeq2)
-library(extrafont)
-library(tidyverse)
-library(readr)
-library(dplyr)
-
 # Load CSV file of DESeq2 results, ordered by padj and containing gene symbol and entrez id's.
 res_df <- read.csv(file.path(output_dir_tables, paste0(project, "_deseq2_results_annotated.csv"))
 )
+
+# MAKE VOLCANO PLO WITH ALL DEGS LABELED: --------------------------------------
+enhanced_volcano_plot <- EnhancedVolcano(
+  res_df,
+  lab = res_df$symbol,         
+  x = 'log2FoldChange',                  
+  y = 'padj',                            
+  title = 'Volcano plot',
+  subtitle = 'Differential gene expression',
+  pCutoff = 0.05, # Adjust p-value cutoff
+  FCcutoff = 1,   # Fold change cutoff
+  pointSize = 3.0,                      
+  labSize = 4.0,                        
+  max.overlaps = 20,
+  drawConnectors = FALSE
+)
+
+# Set filename
+filename <- file.path(output_dir_figures, paste0(project, "_all_degs_volcano_plot.png"))
+png(filename, width = 10, height = 10, units = "in", res = 300)
+print(enhanced_volcano_plot)
+
+dev.off()
 
 # MAKE VOLCANO PLOT WITH SPECIFIC GENES LABELED: -------------------------------
 
@@ -93,7 +107,7 @@ volcano_plot <- ggplot(res_df, aes(x = log2FoldChange, y = -log10(padj))) +
 
 
 # Set filename
-filename <- file.path(output_dir_figures, "degs_volcanoplot.png")
+filename <- file.path(output_dir_figures, paste0(project, "_degs_volcanoplot_specific.png"))
 png(filename, width = 3, height = 3, units = "in", res = 300)
 print(volcano_plot)
 

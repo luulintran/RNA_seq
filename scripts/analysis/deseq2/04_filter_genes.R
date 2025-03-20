@@ -1,11 +1,7 @@
-# Run this after running 'analysis/01_deseq2_e16.R'
-
-# SET UP
-library(DESeq2)
-library(org.Mm.eg.db)
-library(tidyverse)
-library(readr)
-library(dplyr)
+# MAKE LIST OF GENES RELATED TO FILTER: -----------------------------------
+genes_list <- c("Smo", "Boc", "Cdon", "Gas1", "Gli1", "Gli2", "Gli3", "Sufu", 
+                "Disp1", "Iqce", "Efcab7", "Ptch1", "Ptch2", "Hhip", "Sufu", 
+                "Gsk3b", "Ck1", "Pcaf", "Cul3", "Kif7")
 
 # READ IN DESeq2 RESULTS CSV FILE: ---------------------------------------------
 assign(
@@ -15,11 +11,6 @@ assign(
 
 # Save as dataframe
 out <- as.data.frame(resOrdered)
-
-# MAKE LIST OF GENES RELATED TO FILTER: -----------------------------------
-genes_list <- c("Smo", "Boc", "Cdon", "Gas1", "Gli1", "Gli2", "Gli3", "Sufu", 
-               "Disp1", "Iqce", "Efcab7", "Ptch1", "Ptch2", "Hhip", "Sufu", 
-               "Gsk3b", "Ck1", "Pcaf", "Cul3", "Kif7")
 
 # FILTER DESEQ2 RESULTS FOR SHH GENES: -----------------------------------------
 

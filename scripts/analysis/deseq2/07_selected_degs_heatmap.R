@@ -1,13 +1,3 @@
-# Run after running 'analysis/01_deseq2_e16.R' 
-
-library(org.Mm.eg.db)
-library(ggplot2)
-library(DESeq2)
-library(tidyverse)
-library(readr)
-library(dplyr)
-library(pheatmap)
-
 # READ DDS OBJECT FOLLOWING DESEQ2 ANALYSIS FROM RDS FILE: --------------------
 dds <- readRDS(
   file = file.path(output_dir_robj, paste0(project, "_deseq2_dds.rds"))
@@ -95,7 +85,7 @@ resOrdered <- resOrdered[, c("symbol",
                              "entrez", 
                              setdiff(colnames(resOrdered), 
                                      c("symbol", "entrez")))
-                         ]
+]
 
 
 # PREPARE DATA FOR HEATMAP SHOWING SPECIFIC GENE SET: --------------------------
@@ -131,38 +121,126 @@ rownames(mat) <- sig_symbols[sig_symbols %in% combined_gene_list]
 # Center the data
 mat <- mat - rowMeans(mat)
 
-# Make Heatmap in specific order ***********************************************
-progenitor <- c('Nes', 'Sox2', 'Vim', 'Nr2e1', 'Hes1', 'Ednrb', 'Dleu7', 
-                'Ncald','Rfx4', 'Bcan')
-glia <- c('Ccnd1', 'Aldh1l1', 'Cntn1', 'Olig2', 'Olig2', 'Pdgfra', 'Sox10')
-neuron <- c('Eomes', 'Neurod1', 'Neurog2', 'Neurog1', 'Btg2', 'Tbr1', 'Satb2',
-            'Neurod4')
 
-desired_order <- c(progenitor, glia, neuron)
-
-# Only include genes present in the matrix
-ordered_genes <- desired_order[desired_order %in% rownames(mat)]
-
-# Subset the matrix to include only the ordered genes
-mat_ordered <- mat[match(ordered_genes, rownames(mat)), ]
-
-# MAKE HEATMAP WITH ORDERED GENES: ---------------------------------------------
-ordered_combined_gene_list_heatmap <- pheatmap(
-  mat_ordered,
-  # Set to FALSE to use specified order
-  cluster_rows = FALSE,  
+# MAKE HEATMAP: ---------------------------------------------
+default_clustered_heatmap <- pheatmap(
+  mat,
+  cluster_rows = TRUE,  # Default clustering behavior
   cluster_cols = TRUE, 
-  # Show gene symbols
   show_rownames = TRUE,  
-  annotation_col = as.data.frame(
-    colData(vsd)[, "condition", drop=FALSE]),
-  color = colorRampPalette(c("#76BAE0", "white", "#B8396B"))(50))
+  annotation_col = as.data.frame(colData(vsd)[, "condition", drop=FALSE]),
+  color = colorRampPalette(c("#76BAE0", "white", "#B8396B"))(50)
+)
 
-filename <- file.path(output_dir_figures, paste0("degs_heatmap.png"))
+# Save heatmap
+filename <- file.path(output_dir_figures, paste0(project, "_degs_heatmap_default.png"))
 png(filename, width = 5, height = 8, units = "in", res = 300)
+print(default_clustered_heatmap)
+dev.off()
 
-print(ordered_combined_gene_list_heatmap)
+print(paste0("Heatmap saved in ", output_dir_figures))
 
+# MAKE HEATMAP FOR NOTCH GENES: ------------------------------------------------
+
+genes_list <- c("Notch1", "Notch2", "Hes1", "Hes5", "Hey1", "Hes6", "Notch3", 
+                "Notch4", "Rbpj", "Maml", "Dll1", "Dll3", "Jag1","Jag2")
+
+# Remove NAs from padj before filtering for significant genes with padj < 0.05
+sig_res <- resOrdered[!is.na(resOrdered$padj) & resOrdered$padj < 0.05, ]
+
+# Extract rownames/ensembl id's of significant DEGs
+sig_genes <- rownames(sig_res)
+
+# Map ensembl id's to symbols
+sig_symbols <- mapIds(org.Mm.eg.db,
+                      keys = sig_genes,
+                      column = "SYMBOL",
+                      keytype = "ENSEMBL",
+                      multiVals = "first")
+
+# Filter sig_genes list for genes in combined_gene list by symbol
+selected_genes <- sig_genes[sig_symbols %in% genes_list]
+
+# EXTRACT TRANSFORMED VALUES: **************************************************
+vsd <- vst(dds, blind=FALSE)
+
+# Subset assay matrix for the selected genes
+mat <- assay(vsd)[selected_genes, ]
+
+# Update row names with gene symbols for the selected genes
+rownames(mat) <- sig_symbols[sig_symbols %in% genes_list]
+
+# Center the data
+mat <- mat - rowMeans(mat)
+
+
+# MAKE HEATMAP: ---------------------------------------------
+default_clustered_heatmap <- pheatmap(
+  mat,
+  cluster_rows = TRUE,  # Default clustering behavior
+  cluster_cols = TRUE, 
+  show_rownames = TRUE,  
+  annotation_col = as.data.frame(colData(vsd)[, "condition", drop=FALSE]),
+  color = colorRampPalette(c("#76BAE0", "white", "#B8396B"))(50)
+)
+
+# Save heatmap
+filename <- file.path(output_dir_figures, paste0(project, "_degs_heatmap_notch.png"))
+png(filename, width = 5, height = 8, units = "in", res = 300)
+print(default_clustered_heatmap)
+dev.off()
+
+print(paste0("Heatmap saved in ", output_dir_figures))
+
+# MAKE HEATMAP FOR SHH GENES: ------------------------------------------------
+
+genes_list <- c("Smo", "Boc", "Cdon", "Gas1", "Gli1", "Gli2", "Gli3", "Sufu", 
+                "Disp1", "Iqce", "Efcab7", "Ptch1", "Ptch2", "Hhip", "Sufu", 
+                "Gsk3b", "Ck1", "Pcaf", "Cul3", "Kif7")
+
+# Remove NAs from padj before filtering for significant genes with padj < 0.05
+sig_res <- resOrdered[!is.na(resOrdered$padj) & resOrdered$padj < 0.05, ]
+
+# Extract rownames/ensembl id's of significant DEGs
+sig_genes <- rownames(sig_res)
+
+# Map ensembl id's to symbols
+sig_symbols <- mapIds(org.Mm.eg.db,
+                      keys = sig_genes,
+                      column = "SYMBOL",
+                      keytype = "ENSEMBL",
+                      multiVals = "first")
+
+# Filter sig_genes list for genes in combined_gene list by symbol
+selected_genes <- sig_genes[sig_symbols %in% genes_list]
+
+# EXTRACT TRANSFORMED VALUES: **************************************************
+vsd <- vst(dds, blind=FALSE)
+
+# Subset assay matrix for the selected genes
+mat <- assay(vsd)[selected_genes, ]
+
+# Update row names with gene symbols for the selected genes
+rownames(mat) <- sig_symbols[sig_symbols %in% genes_list]
+
+# Center the data
+mat <- mat - rowMeans(mat)
+
+
+# MAKE HEATMAP: ---------------------------------------------
+default_clustered_heatmap <- pheatmap(
+  mat,
+  cluster_rows = TRUE,  # Default clustering behavior
+  cluster_cols = TRUE, 
+  show_rownames = TRUE,  
+  annotation_col = as.data.frame(colData(vsd)[, "condition", drop=FALSE]),
+  color = colorRampPalette(c("#76BAE0", "white", "#B8396B"))(50)
+)
+
+# Save heatmap
+filename <- file.path(output_dir_figures, paste0(project, "_degs_heatmap_shh.png"))
+png(filename, width = 5, height = 8, units = "in", res = 300)
+print(default_clustered_heatmap)
 dev.off()
 
 print(paste0("Heatmap saved in ", output_dir_figures))

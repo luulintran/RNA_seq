@@ -1,11 +1,3 @@
-# SET UP
-library(ggplot2)
-library(DESeq2)
-library(extrafont)
-
-# import Arial font
-font_import(pattern = "Arial", prompt = FALSE)
-
 # READ DDS OBJECT FROM RDS FILE: -----------------------------------------------
 dds <- readRDS(
   file = file.path(output_dir_robj, paste0(project, "_deseq2_dds.rds"))
@@ -42,7 +34,7 @@ pcaplot <- ggplot(pcaData, aes(x = PC1, y = PC2, color = condition)) +
   )
 
 # SAVE PLOT: -------------------------------------------------------------------
-filename <- file.path(output_dir_figures, "pcaplot.png")
+filename <- file.path(output_dir_figures, paste0(project,"_pcaplot.png"))
 
 png(filename, width = 3, height = 3, units = "in", res = 300)
 print(pcaplot)

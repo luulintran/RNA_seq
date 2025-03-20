@@ -1,10 +1,3 @@
-# SET UP
-library(DESeq2)
-library(tidyverse)
-library(dplyr)
-library(readr)
-
-
 # READ IN DATA:-----------------------------------------------------------------
 # raw gene counts data from star_salmon; remove gene_name column
 cts <- read.csv(input_cts, sep= "\t", row.names = 1) # makes the rownames the first col

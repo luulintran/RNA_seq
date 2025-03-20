@@ -1,22 +1,3 @@
-# Run this after running 'analysis/01_deseq2_e16.R'
-
-# SET UP
-library(DESeq2)
-library(org.Mm.eg.db)
-library(tidyverse)
-library(readr)
-library(dplyr)
-
-
-
-# LOAD RDS FILE OF DDS OBJECT: -------------------------------------------------
-dds <- readRDS(
-  file = file.path(output_dir_robj, paste0(project, "_deseq2_dds.rds"))
-)
-
-# STORE DESEQ2 RESULTS: --------------------------------------------------------
-res <- results(dds)
-
 # ANNOTATE RESULTS WITH GENE SYMBOLS AND ENTREZ IDS: ---------------------------
 ensembl_ids <- rownames(res)
 
