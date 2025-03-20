@@ -32,3 +32,4 @@ scripts/analysis/functional_enrichment/.Rapp.history
 *.log
 .DS_Store
 .Rproj.user/
+scripts/setup/.Rapp.history
