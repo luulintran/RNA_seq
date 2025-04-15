@@ -4,7 +4,7 @@ This repository contains scripts for running RNA-seq downstream analysis. It inc
 ---
 
 ## Overview
-To preprocess the data from each assay, we used the Nf-core RNA-seq (https://nf-co.re/rnaseq/3.14.0/) pipeline. Then we performed downstream analysis using the processed data. For RNA-seq, we used DESeq2 (v 1.42.1), pheatmap (v 1.012) and clusterProfiler (v 4.10.10) R packages. 
+To preprocess the data from each assay, we used the Nf-core RNA-seq (https://nf-co.re/rnaseq/3.14.0/) pipeline. Then we performed downstream analysis using the processed data. For RNA-seq, we used DESeq2 (v 1.42.1) for differential expression analysis, pheatmap (v 1.012) for generating heatmaps, and clusterProfiler (v 4.10.10) for functional enrichment analysis (Gene Ontology Enrichment, Reactome PA, and KEGG). 
 
 ---
 
@@ -53,7 +53,9 @@ Processed data (normalized counts) should be put in the `data/processed_data` di
 
 The `scripts/analysis/` directory contains scripts for performing downstream analysis using DESeq2, clusterProfiler, etc.
 
-Within each `analysis` subdirectory, for example `analysis/deseq2`, there will be `config.R` scripts where you can change file paths for input files and output directories, as well as variables, such as control_group and mutant_group.
+Within each `analysis` subdirectory, for example `analysis/deseq2`, there will be `config.R` scripts where you can change file paths for input files and output directories, as well as variables, such as control_group and mutant_group. 
+
+`scripts/analysis/` contains scripts for differential expression analysis (`deseq2`) and functional enrichment analysis such as Gene Ontology Enrichment Analysis, Reactome Pathway Analysis, and KEGG Pathway Analysis (`functional_enrichment`). These are all done using R.
 
 ## Figures
 
